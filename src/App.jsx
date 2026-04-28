@@ -1,13 +1,13 @@
-import React from "react";
+import { Routes, Route } from "react-router-dom";
 
-import TestApi from "./components/TestApi";
+import Dashboard from "./Pages/Dashboard";
 
-const App = () => {
+function App() {
   return (
-    <div>
-      <TestApi />
-    </div>
+    <Routes>
+      <Route path="/" element={<Dashboard />} />
+    </Routes>
   );
-};
+}
 
 export default App;
