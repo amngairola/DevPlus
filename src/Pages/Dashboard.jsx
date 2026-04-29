@@ -8,27 +8,23 @@ import { useCommitActivity } from "./../hooks/useCommitActivity";
 import SearchBar from "../components/SearchBar";
 
 import Error from "../components/Error";
-import { useEffect } from "react";
+import { Suspense, useEffect } from "react";
+import ProfileCard from "../components/ProfileCard";
 
 const Dashboard = () => {
   const [params, setParams] = useSearchParams();
 
   const username = params.get("user") || "";
 
-  const { data: user, isLoading, isError, error } = useGithubUser(username);
+  const { data, isLoading, isError, error } = useGithubUser(username);
 
-  const { data: repos } = useGithubRepos(username);
   const { data: heatmap } = useHeatMap(username);
 
   const { data: commits } = useCommitActivity("facebook", "react");
 
   useEffect(() => {
-    if (user) console.log("USER updated:", user);
-  }, [user]);
-
-  useEffect(() => {
-    if (repos) console.log("REPOS updated:", repos);
-  }, [repos]);
+    if (data) console.log("USER updated:", data);
+  }, [data]);
 
   useEffect(() => {
     if (heatmap) console.log("HEATMAP updated:", heatmap);
@@ -38,7 +34,10 @@ const Dashboard = () => {
     if (name === username) return;
     setParams({ user: name });
   };
-
+  console.log("FULL DATA:", data);
+  console.log("USER:", data?.user);
+  console.log("USERNAME:", username);
+  console.log("isError:", isError, error);
   return (
     <div className="p-6">
       <SearchBar onSearch={handleSearch} initialValue={username} />
@@ -47,8 +46,9 @@ const Dashboard = () => {
         {isLoading && <Skeleton />}
 
         {isError && <Error error={error} />}
-
-        {user && <UserProfile data={user} />}
+        <Suspense fallback={<Skeleton />}>
+          {data && <ProfileCard user={data.user} repos={data.repos} />}
+        </Suspense>
       </div>
     </div>
   );

@@ -7,7 +7,9 @@ const Error = ({ error }) => {
       {error?.response?.status === 403 && (
         <p>Rate limit exceeded. Try later.</p>
       )}
-      {!error?.response && <p>Network error. Check internet.</p>}
+      {error?.response && (
+        <p>{error.response.data?.message || "Something went wrong"}</p>
+      )}
     </div>
   );
 };
