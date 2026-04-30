@@ -6,15 +6,17 @@ import { useSearchParams } from "react-router-dom";
 import { useGithubRepos } from "./../hooks/useGithubRepos";
 import { useCommitActivity } from "./../hooks/useCommitActivity";
 import SearchBar from "../components/SearchBar";
-
 import Error from "../components/Error";
 import { Suspense, useEffect } from "react";
 import ProfileCard from "../components/ProfileCard";
+import LanguageChart from "../components/LanguageChart";
+
+import LanguageChartSkeleton from "../components/LanguageChartSkeleton";
 
 const Dashboard = () => {
   const [params, setParams] = useSearchParams();
 
-  const username = params.get("user") || "";
+  const username = params.get("user") || "react";
 
   const { data, isLoading, isError, error } = useGithubUser(username);
 
@@ -49,6 +51,9 @@ const Dashboard = () => {
         <Suspense fallback={<Skeleton />}>
           {data && <ProfileCard user={data.user} repos={data.repos} />}
         </Suspense>
+
+        {data.repos && <LanguageChart repos={data.repos} />}
+        {!data.repos && <LanguageChartSkeleton />}
       </div>
     </div>
   );
